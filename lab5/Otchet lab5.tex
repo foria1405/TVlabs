@@ -1,0 +1,408 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage [left=30 mm, top=30 mm, right=30 mm, bottom=20mm, nohead, footskip=10 mm] {geometry}
+\usepackage{pscyr}
+\usepackage[T2A]{fontenc}
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\graphicspath{{src/}}
+\usepackage{listings}   
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+%\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{indentfirst}
+\usepackage{listings}
+\usepackage{float}%"Плавающие" картинки
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Sharelatex Example},
+    bookmarks=true,
+    pdfpagemode=FullScreen,
+}
+\usepackage{wrapfig}%Обтекание фигур (таблиц, картинок и прочего)
+
+\parindent=24pt
+
+
+\begin{document}
+
+\begin{center}
+\hfill \break
+\large{МИНОБРНАУКИ РОССИИ} \\
+\hfill \break
+\small {ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ БЮДЖЕТНОЕ ОБРАЗОВАТЕЛЬНОЕ УЧРЕЖДЕНИЕ }\\
+\small { ВЫСШЕГО ПРОФЕССИОНАЛЬНОГО ОБРАЗОВАНИЯ  } \\
+\hfill \break
+\normalsize {\textbf{ <<САНКТ-ПЕТЕРБУРГСКИЙ ПОЛИТЕХНИЧЕСКИЙ УНИВЕРСИТЕТ } }\\
+{\normalsize {\textbf { ПЕТРА ВЕЛИКОГО>>}}} \\
+\hfill \break
+\large{Институт Прикладной математики и механики }\\
+\hfill \break
+\large{ Кафедра: <<Телематика ( при ЦНИИ РТК )>> }\\
+\hfill \break
+Направление 02.03.01 Математика и компьютерные науки\\
+\vskip 1cm
+\Large {Отчёт по дисциплине:}
+\vskip 0.2cm
+\Large{<<Теория вероятностей и математическая статистика >>} \\
+\hfill \break
+\large{Лабораторная работа № 5} \\
+\hfill \break
+\large{<<Двумерное нормальное распределение: выборочные коэффициенты корреляции и эллипсы рассеивания>>} \\
+\hfill \break
+\vskip 0.3cm
+\vskip 0.5cm
+\end{center}
+
+
+\begin {tabular}{cccc}
+\hspace{0.5cm}Обучающийся: &\underline {\hspace{3cm}} &  &Фомина Дарья Дмитриевна \\\\
+\hspace{0.5cm}Руководитель: &\underline {\hspace{3cm}} & &Баженов Александр Николаевич\\\\
+\end{tabular}
+\vskip 1.5 cm
+\hspace{9cm}\def \hrf#1{\hbox to#1{\hrulefill}}<<\hrf{2em}>>  \hrf{6em}  20\hrf{1em}~r.
+\vskip 1.5cm
+\begin {center} Санкт-Петербург 2021 \end{center}
+
+\thispagestyle{empty}
+
+\newpage
+
+
+\tableofcontents
+
+
+\newpage
+\section{Постановка задачи}
+ Дано двумерное нормальное распределение $N(x, y, 0, 0, 1, 1, \rho)$.
+
+Требуется сгенерировать двумерные выборки размером 20, 60, 100 элементов и коэффициентами корреляции 0, 0.5, 0.9.
+
+Каждую выборку необходимо сгенерировать 1000 раз и вычислить для неё:
+\begin{itemize}
+	\item Среднее значение
+	\item Среднее значение квадрата
+	\item Дисперсию коэффициента корреляции Пирсона
+	\item Дисперсию коэффициента корреляции Спирмена
+	\item Дисперсию квадрантного коэффициента корреляции
+\end{itemize}
+
+Также требуется произвести эти вычисления для смеси нормальных распределений:
+\begin{equation}\label{mix}
+f(x, y) = 0.9N(x, y, 0, 0, 1, 1, 0.9) + 0.1N(x, y, 0, 0, 10, 10, -0.9)
+\end{equation}
+Изобразить сгенерированные точки на плоскости и эллипсе равновероятности.
+\newpage
+\section{Математическое описание}
+\subsection{Двумерное нормальное распределение}
+
+Двумерная случайная величина (X,Y) называется {\it нормально распределённой}, если её плотность вероятности определена следующим образом:
+\begin{multline}\label{N2}
+	N(x, y, \overline{x}, \overline{y}, \sigma_x, \sigma_y, \rho) =
+	\frac{1}{2 \sigma_x \sigma_y \sqrt{1 - \rho^2}} \times \\	
+	\times exp \left( - \frac{1}{2(1 - \rho^2)} \left[ \frac{(x - \overline{x})^2}{\sigma_x^2} - 2 \rho (x - \overline{x}) (y - \overline{y}) + \frac{(y - \overline{y})^2}{\sigma_y^2}) \right] \right) 
+\end{multline}
+
+При этом компоненты $X$ и $Y$ двумерной нормальной случаной величины также распределены нормально с математическими ожиданиями $\overline{x}, \overline{y}$  и средними квадратическими отклонениями соответственно $\sigma_x$ и $\sigma_y$. \cite{lit1}
+
+\subsection{Корреляционный момент(ковариация) и коэффициент корреляции}
+
+\textit{Ковариацией} или \textit{корреляционным моментом} случайной величины называется матожидание произведения отклонений компонент случайной величины от её среднего:
+\begin{equation}\label{K}
+	K_{XY} = cov(X, Y) = M[(X - \overline{x})(Y - \overline{y})]
+\end{equation}
+
+\textit{Коэффициентом корреляции} является нормированный на единицу корреляционный момент. Показывает меру линейной зависимости между величинами. \cite{lit1}
+
+\begin{equation}\label{rho}
+	\rho = \frac{K_{XY}}{\sigma_x \sigma_y}
+\end{equation}
+
+\subsection{Выборочные коэффициенты корреляции}
+\subsubsection{Выборочный коэффициент корреляции Пирсона}
+Коэффициент корреляции, определяемый по выборочным данным, называется {\it выборочным коэффициентом корреляции}.
+Для выборки двумерной случайной величины $\{x_i, y_i\}_{i=\overline{1,n}}$ наиболее естественным приближением корреляционного коэффициента является соотношение:
+
+\begin{equation}\label{r}
+	r = \frac{\frac{1}{n} \displaystyle \sum_{i=1}^{n}{\left(x_i - \overline{x}\right)\left(y_i - \overline{y}\right)}}{\sqrt{\displaystyle \sum_{i=1}^{n}{\frac{1}{n}\left(x_i - \overline{x}\right)^2\frac{1}{n}\left(y_i - \overline{y}\right)^2}}} = \frac{K_{XY}}{s_X s_Y},
+\end{equation}
+где $K_{XY}, s_X^2, s_Y^2$ -- выборочная ковариация и дисперсии соответствующих случайных величин. \cite{lit1}
+
+\subsubsection{Выборочный квадрантный коэффициент корреляции}
+Выборочный квадрантный коэффициент корреляции:
+
+\begin{equation}\label{rq}
+	r_Q=\frac{(n_1 + n_3) - (n_2 + n_4)}{n},
+\end{equation}
+
+где $n_1, n_2, n_3, n_4$ -- количества точек с координатами $(x_i, y_i)$, попавшими соответственно в I, II, III и IV квадранты декартовой системы с осями $x' = x - med \; x, y' = y - med \; y$ и с центром в точке с координатами $(med \; x, med \; y)$. \cite{lit1}
+
+\subsubsection{Выборочный коэффициент ранговой корреляции Спирмена}
+
+Обозначим ранги, соответствующие значениям переменной $X$, через $u$, а ранги, соответствующие значениям переменной $Y$, — через $v$.
+
+        Выборочный коэффициент ранговой корреляции Спирмена :
+       \begin{equation}
+r_S = \frac{\frac{1}{n} \sum (u_i - \overline{u})(v_i - \overline{v})}{\sqrt{\frac{1}{n} \sum (u_i - \overline{u})^2 \frac{1}{n} \sum (v_i - \overline{v})^2}},
+\label{rs}
+\end{equation}
+
+        где $\overline{u} = \overline{v} = \frac{1 + 2 + ... + n}{n} = \frac{n+1}{2}$ -- среднее значение рангов. \cite{lit1}
+\subsection{Эллипсы рассеивания}
+
+Уравнение проекции эллипса рассеивания на плоскость $xOy$:
+
+    \begin{equation}
+        \frac{(x-\overline{x})^2}{\sigma_x^2} - 2\rho\frac{(x-\overline{x})(y-\overline{y})}{\sigma_x\sigma_y} + \frac{(y-\overline{y})^2}{\sigma_y^2} = const.
+        \label{ellipse}
+    \end{equation}
+
+Центр эллипса (\ref{ellipse}) находится в точке с координатами $(\overline{x}, \overline{y})$.
+Произведя соответствующие выкладки, получаем, что большая полуось эллипса составляет с абсциссой угол, выраженный по следующей формуле:
+\begin{equation}\label{tga}
+	tg 2\alpha = \frac{2 \rho \sigma_x \sigma_y}{\sigma_x^2 - \sigma_y^2}
+\end{equation}
+
+Посмотрев на данное соотношение, можно понять, что угол поворота эллипса даёт нам качественное представление о степени коррелированности данных.
+
+Контур эллипса является линией равной вероятности, поэтому такой эллипс называется эллипсом равной плотности либо {\it эллипсом рассеивания}. \cite{lit2}
+\newpage
+\section{Особенности реализации}
+Программа для данной лабораторной работы была написана на языке Python 3.9. 
+
+В данной лабораторной работе для генерации выборок двумерного распределения была использована библиотека scipy. Так же для построения эллипсов рассеивания была использована библиотека matplotlib. 
+
+В ходе данной лабораторной работы были реализованы функции вычисления выборочных коэффицентов корреляции в соответствии с формулами \eqref{r}, \eqref{rq} и \eqref{rs}.  Так же была реализована функция, осуществляющая построение эллипсов рассеяния в соответствии с формулой \eqref{ellipse}.
+\vskip 0.4cm
+\par Функция для вычисления выборочного коэффициента корреляции Пирсона реализована по формуле \eqref{r}:
+\hrule width 16cm height 1pt
+\begin{verbatim}
+def pearson(x, y):
+    if len(x) != len(y):
+        raise ValueError("Две выборки должны иметь одинаковый размер!")
+    n = len(x)
+    xm = sum(x) / n
+    ym = sum(x) / n
+    cov = sum([(x[i] - xm)*(y[i] - ym) for i in range(n)])
+    sXsY = sqrt(sum([(x[i]-xm)**2 for i in range(n)]) * \
+              sum([(y[i]-ym)**2 for i in range(n)]))
+    return cov / sXsY
+\end{verbatim}
+\hrule width 16cm height 1pt
+\vskip 0.4cm
+\par Функция для вычисления выборочного квадрантного коэффициента корреляции реализована по формуле \eqref{rq}:
+\hrule width 16cm height 1pt
+\begin{verbatim}
+def quadrant(x, y):
+    if len(x) != len(y):
+        raise ValueError("Две выборки должны иметь одинаковый размер!")
+    xm = np.median(x)
+    ym = np.median(y)
+    sign = lambda x: 1 if x > 0 else -1 if x < 0 else 0
+    return sum(map(lambda a: sign((a[0]-xm)*(a[1]-ym)), zip(x, y))) / len(x)
+\end{verbatim}
+\hrule width 16cm height 1pt
+\vskip 0.4cm
+\par Функция для вычисления выборочного коэффициента ранговой корреляции Спирмена реализована по формуле \eqref{rs}:
+\hrule width 16cm height 1pt
+\begin{verbatim}
+def spearman(x, y):
+    sx = sorted(x)
+    sy = sorted(y)
+    rx = [sx.index(a) for a in x]
+    ry = [sy.index(a) for a in y]
+    return pearson(rx, ry)
+\end{verbatim}
+\hrule width 16cm height 1pt
+\vskip 0.4cm
+\par Функция, осуществляющая построение эллипсов рассеяния в соответствии с формулой \eqref{ellipse}, в которой $const=9$:
+\vskip 0.3cm
+\hrule width 16cm height 1pt
+\begin{verbatim}
+def plotEllipse(x, y, ax, sigmas):
+    r = pearson(x, y)
+    ellipse = Ellipse((0, 0),
+                      width=sqrt(1 + r),
+                      height=sqrt(1 - r),
+                      facecolor='none',
+                      edgecolor='red')
+    xm = sum(x) / len(x)
+    ym = sum(y) / len(y)
+    sx = sqrt(sum(map(lambda a: (a - xm)**2, x)) / len(x))
+    sy = sqrt(sum(map(lambda a: (a - ym)**2, y)) / len(y))
+    tr = transforms.Affine2D() \
+         .rotate_deg(45) \
+         .scale(sx * sigmas, sy * sigmas) \
+         .translate(xm, ym)
+    ellipse.set_transform(tr + ax.transData)
+    ax.add_patch(ellipse)
+    ax.scatter(x, y, s=0.9)    
+        
+    s = rvs2d(size=100, rho=0.5)
+    print(s)
+    print(quadrant(*s))
+    print(pearson(*s))
+    print(spearman(*s))
+    print(mixed(10))
+    fig, ax = plt.subplots()
+    plotEllipse(*s, ax, 3)
+    plt.show()
+
+\end{verbatim}
+\hrule width 16cm height 1pt
+
+\newpage
+
+\section{Результаты работы программы}
+
+\subsection{Эллипсы рассеивания}
+
+На рис. \ref{fig:20}-\ref{fig:100} представлены результаты  работы программы. На каждом из рисунков представлены эллипсы рассеивания, построенные по формуле \eqref{ellipse}.
+
+На рис. \ref{fig:20} представлены эллипсы рассеивания для выборок из 20 элементов.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[height=0.3\linewidth]{200.png}
+	\caption{Эллипсы рассеивания для выборок из 20 элементов.}
+	\label{fig:20}
+\end{figure}
+
+На рис. \ref{fig:60} представлены эллипсы рассеивания для выборок из 60 элементов.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[height=0.3\linewidth]{600.png}
+	\caption{Эллипсы рассеивания для выборок из 60 элементов.}
+	\label{fig:60}
+\end{figure}
+
+
+На рис. \ref{fig:100} представлены эллипсы рассеивания для выборок из 100 элементов.
+\begin{figure}[H]
+	\centering
+	\includegraphics[height=0.3\linewidth]{1000.png}
+	\caption{Эллипсы рассеивания для выборок из 100 элементов.}
+	\label{fig:100}
+\end{figure}
+
+\subsection{Выборочные коэффициенты корреляции}
+
+Ниже, в таблицах \ref{rho0} - \ref{rho09} представлены выборочные коэффициенты корреляции Пирсона, Спирмена и квадрантный коэффициент корреляции для выборок размером 20, 60 и 100 элементов двумерного нормального распределения $N(x, y, 0, 0, 1, 1, \rho)$ с коэффициентами корреляции $\rho = 0, 0.5, 0.9$. 
+\begin{table}[h]
+    \begin{center}
+        \caption{Выборочные коэффициенты корреляции для двумерного нормального распределения, $\rho = 0$}
+        \phantom{0}\\
+        \begin{tabular}{||c||c|c|c||c|c|c||c|c|c||}\hline
+            \multirow{2}*{$\rho = 0 \,\, \eqref{rho} $}& \multicolumn{3}{c||}{$r\mathstrut$ (\ref{r})} & \multicolumn{3}{c||}{$r_Q$ (\ref{rq})} & \multicolumn{3}{c||}{$r_S$ (\ref{rs})}\\
+            \cline{2-10}
+                & $E(z)\mathstrut$ & $E(z^2)$ & $D(z)$ & $E(z)$ & $E(z^2)$ & $D(z)$ & $E(z)$ & $E(z^2)$ & $D(z)$\\
+            \hline
+            $N=20$ & $0.005\mathstrut$ & 0.053 & 0.053 & 0.006 & 0.053 & 0.053 & 0.007 & 0.052 & 0.052\\
+            \hline
+            $N=60$ & $0.001\mathstrut$ & 0.018 & 0.018 & 0.004 & 0.017 & 0.017 & 0.004 & 0.018 & 0.017\\
+            \hline
+            $N=100$ & $0.003\mathstrut$ & 0.011 & 0.011 & 0.001 & 0.01 & 0.01 & 0.004 & 0.011 & 0.011\\
+            \hline
+        \end{tabular}
+    \label{rho0}
+    \end{center}
+\end{table}
+
+\begin{table}[h]
+    \begin{center}
+        \caption{Выборочные коэффициенты корреляции для двумерного нормального распределения, $\rho = 0.5$}
+        \phantom{0}\\
+        \begin{tabular}{||c||c|c|c||c|c|c||c|c|c||}\hline
+            \multirow{2}*{$\rho = 0.5$}& \multicolumn{3}{c||}{$r\mathstrut$} & \multicolumn{3}{c||}{$r_Q$} & \multicolumn{3}{c||}{$r_S$}\\
+            \cline{2-10}
+                & $E(z)\mathstrut$ & $E(z^2)$ & $D(z)$ & $E(z)$ & $E(z^2)$ & $D(z)$ & $E(z)$ & $E(z^2)$ & $D(z)$\\
+            \hline
+            $N=20$ & $0.5\mathstrut$ & 0.3 & 0.03 & 0.324 & 0.155 & 0.05 & 0.46 & 0.24 & 0.035\\
+            \hline
+            $N=60$ & $0.5\mathstrut$ & 0.26 & 0.01 & 0.32 & 0.12 & 0.016 & 0.5 & 0.24 & 0.01\\
+            \hline
+            $N=100$ & $0.5\mathstrut$ & 0.26 & 0.005 & 0.33 & 0.12 & 0.009 & 0.5 & 0.24 & 0.006\\
+            \hline
+        \end{tabular}
+    \label{rho05}
+    \end{center}
+\end{table}
+
+\begin{table}[h]
+    \begin{center}
+        \caption{Выборочные коэффициенты корреляции для двумерного нормального распределения, $\rho = 0.9$}
+        \phantom{0}\\
+        \begin{tabular}{||c||c|c|c||c|c|c||c|c|c||}\hline
+            \multirow{2}*{$\rho = 0.9$}& \multicolumn{3}{c||}{$r\mathstrut$} & \multicolumn{3}{c||}{$r_Q$} & \multicolumn{3}{c||}{$r_S$}\\
+            \cline{2-10}
+                & $E(z)\mathstrut$ & $E(z^2)$ & $D(z)$ & $E(z)$ & $E(z^2)$ & $D(z)$ & $E(z)$ & $E(z^2)$ & $D(z)$\\
+            \hline
+            $N=20$ & $0.9\mathstrut$ & 0.8 & 0.003 & 0.6916 & 0.5064 & 0.03 & 0.9 & 0.75 & 0.005\\
+            \hline
+            $N=60$ & $0.89\mathstrut$ & 0.8 & 0.0007 & 0.7 & 0.5 & 0.009 & 0.89 & 0.78 & 0.001\\
+            \hline
+            $N=100$ & $0.9\mathstrut$ & 0.8 & 0.0004 & 0.7042 & 0.5 & 0.005 & 0.9 & 0.8 & 0.0006\\
+            \hline
+        \end{tabular}
+    \label{rho09}
+    \end{center}
+\end{table}
+Ниже в таблице \ref{mixTable} представлены выборочные коэффициенты корреляции Пирсона, Спирмена и квадрантный коэффициент корреляции для выборок смеси двумерных нормальных распределений (\ref{mix}) размером 20, 60 и 100 элементов.
+\newpage
+\begin{table}[h]
+    \begin{center}
+        \caption{Выборочные коэффициенты корреляции для смеси двумерных нормальных распределений}
+        \phantom{0}\\
+        \begin{tabular}{||c||c|c|c||c|c|c||c|c|c||}\hline
+            \multirow{2}*{}& \multicolumn{3}{c||}{$r\mathstrut$} & \multicolumn{3}{c||}{$r_Q$} & \multicolumn{3}{c||}{$r_S$}\\
+            \cline{2-10}
+                & $E(z)\mathstrut$ & $E(z^2)$ & $D(z)$ & $E(z)$ & $E(z^2)$ & $D(z)$ & $E(z)$ & $E(z^2)$ & $D(z)$\\
+            \hline
+            $N=20$ & $-0.35\mathstrut$ & 0.57 & 0.45 & 0.5332 & 0.32 & 0.036 & 0.47 & 0.3 & 0.08\\
+            \hline
+            $N=60$ & $-0.65\mathstrut$ & 0.5 & 0.08 & 0.56 & 0.32 & 0.01 & 0.5 & 0.25 & 0.026\\
+            \hline
+            $N=100$ & $-0.7\mathstrut$ & 0.52 & 0.03 & 0.56 & 0.32 & 0.007 & 0.47 & 0.23 & 0.02\\
+            \hline
+        \end{tabular}
+    \label{mixTable}
+    \end{center}
+\end{table}
+
+\newpage
+ \section*{Заключение}
+{\addcontentsline {toc}{section}{Заключение}}
+\par В рамках лабораторной работы были сгенерированы выборки разного размера для двумерного нормального распределения сс коэффициентами корреляции $\rho = 0, 0.5, 0.9$  и для смеси двумерных нормальных распределений.  Для полученных выборок были рассчитаны выборочные коэффициенты корреляции Пирсона и Спирмена, квадрантный коэффициент корреляции. Так же для выборок были построены эллипсы рассеивания.
+
+
+При изучении построенных эллипсов рассеивания было установлено, что чем больше коэффициент корреляции, тем больше сужается эллипс рассеивания, в пределе вырождаясь в прямую, при модуле коэффициента корреляции равном единице. Для выборки размером 100 элементов с нулевой корреляцией эллипс очень близок к окружности. 
+
+Для таких выборок видно, что коэффициент корреляции Пирсона очень близок к коэффициенту корреляции выборки. Коэффициент корреляции Спирмена менее точен, но тоже достаточно близок к коэффициенту корреляции выборки.
+Исходя из оценок выборочных коэффициентов корреляции можно сделать вывод, что квадрантный выборочный коэффициент имеет наибольшее отклонение от теоретического значения коэффициента корреляции, но с увеличением мощности выборки все выборочные коэффициенты корреляции стремятся к своим теоретическим значениям.\\
+
+
+\newpage
+
+\addcontentsline{toc}{section}{Список используемой литературы}
+\begin{thebibliography}{}
+	\bibitem{lit1}  Вероятностные разделы математики. Учебник для бакалавров технических направлений.// Под ред. Максимова Ю.Д. — Спб.: «Иван Федоров», 2001. — 592 c., илл.
+	\bibitem{lit2}  Вентцель Е.С. Теория вероятностей: Учеб. для вузов. — 6-е изд. стер. — М.: Высш. шк., 1999.— 576 c.
+\end{thebibliography}
+\newpage
+\appendix
+
+
+\section{Приложение}
+\label{sec:A}
+\par Исходный код программы размещен на сервисе GitHub.
+\par Ссылка на репозиторий: \url{https://github.com/foria1405/TVlabs}
+\end{document}
