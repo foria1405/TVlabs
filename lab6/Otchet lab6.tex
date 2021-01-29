@@ -1,0 +1,280 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage [left=30 mm, top=30 mm, right=30 mm, bottom=20mm, nohead, footskip=10 mm] {geometry}
+\usepackage{pscyr}
+\usepackage[T2A]{fontenc}
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\graphicspath{{src/}}
+\usepackage{listings}   
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+%\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{indentfirst}
+\usepackage{listings}
+\usepackage{float}%"Плавающие" картинки
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Sharelatex Example},
+    bookmarks=true,
+    pdfpagemode=FullScreen,
+}
+\usepackage{wrapfig}%Обтекание фигур (таблиц, картинок и прочего)
+
+\parindent=24pt
+
+
+\begin{document}
+
+\begin{center}
+\hfill \break
+\large{МИНОБРНАУКИ РОССИИ} \\
+\hfill \break
+\small {ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ БЮДЖЕТНОЕ ОБРАЗОВАТЕЛЬНОЕ УЧРЕЖДЕНИЕ }\\
+\small { ВЫСШЕГО ПРОФЕССИОНАЛЬНОГО ОБРАЗОВАНИЯ  } \\
+\hfill \break
+\normalsize {\textbf{ <<САНКТ-ПЕТЕРБУРГСКИЙ ПОЛИТЕХНИЧЕСКИЙ УНИВЕРСИТЕТ } }\\
+{\normalsize {\textbf { ПЕТРА ВЕЛИКОГО>>}}} \\
+\hfill \break
+\large{Институт Прикладной математики и механики }\\
+\hfill \break
+\large{ Кафедра: <<Телематика ( при ЦНИИ РТК )>> }\\
+\hfill \break
+Направление 02.03.01 Математика и компьютерные науки\\
+\vskip 1cm
+\Large {Отчёт по дисциплине:}
+\vskip 0.2cm
+\Large{<<Теория вероятностей и математическая статистика >>} \\
+\hfill \break
+\large{Лабораторная работа № 6} \\
+\hfill \break
+\large{<<Оценки коэффициентов линейной регрессии>>} \\
+\hfill \break
+\vskip 0.3cm
+\vskip 1cm
+\end{center}
+
+
+\begin {tabular}{cccc}
+\hspace{0.5cm}Обучающийся: &\underline {\hspace{3cm}} &  &Фомина Дарья Дмитриевна \\\\
+\hspace{0.5cm}Преподаватель: &\underline {\hspace{3cm}} & &Баженов Александр Николаевич\\\\
+\end{tabular}
+\vskip 1.5 cm
+\hspace{9cm}\def \hrf#1{\hbox to#1{\hrulefill}}<<\hrf{2em}>>  \hrf{6em}  20\hrf{1em}~r.
+\vskip 1.5cm
+\begin {center} Санкт-Петербург 2021 \end{center}
+
+\thispagestyle{empty}
+
+\newpage
+
+
+\tableofcontents
+
+
+\newpage
+\section{Постановка задачи}
+Требуется найти оценки коэффициентов линейной регрессии $y_i = a + bx_i + e_i$, используя 20 равномерно распределённых на отрезке $[-1.8; 2.0]$ точек. Ошибку $e_i$ считаем нормально распределённой с матожиданием 0 и дисперсией 1. В качестве эталонной зависимости взять $y_i = 2 + 2x_i + e_i$.
+
+Оценку требуется произвести по двум критериям:
+\begin{itemize}
+	\item Критерий наименьших квадратов
+	\item Критерий наименьших модулей
+\end{itemize}
+
+То же самое требуется проделать для выборки, у которой в крайние значения вносятся возмущения 10 и -10 соответственно.
+
+\newpage
+	\section{Математическое описание}
+	
+	\subsection{Простая линейная регрессия}
+
+    \subsubsection{Модель простой линейной регрессии}
+    Регрессионную модель описания данных называют простой линейной регрессией, если
+    \begin{equation}\label{y}
+        y_i = \beta_0 + \beta_1x_i + \varepsilon_i, \quad i=1, \dots, n,
+    \end{equation}
+    где $x_1, \dots, x_n$ — заданные числа (значения фактора); $y_1, \dots, y_n$ — наблюдаемые значения отклика; $\varepsilon_1, \dots, \varepsilon_n$ — независимые, нормально распределённые $N(0,\sigma)$ с нулевым математическим ожиданием и одинаковой (неизвестной) дисперсией случайные величины (ненаблюдаемые); $\beta_0, \beta_1$ — неизвестные параметры, подлежащие оцениванию. \cite{lit1}
+
+
+
+    \subsubsection{Метод наименьших квадратов}
+    Метод наименьших квадратов (МНК):
+    \begin{equation}\label{mnk}
+        Q(\beta_0, \beta_1) = \sum_{i = 1}^{n}\varepsilon_{i}^{2} = \sum_{i = 1}^{n}(y_i - \beta_0 - \beta_1x_i)^2 \rightarrow \min_{\beta_0, \beta_1}.
+    \end{equation}
+Задача минимизации квадратичного критерия (2) носит название задачи {\it метода наименьших квадратов (МНК)},  а оценки  $\hat{\beta}_0, \hat{\beta}_1$ параметров $\beta_0, \beta_1$, реализующие минимум критерия (2), называют МНК-оценками. \cite{lit1}
+
+
+
+    \subsubsection{Расчётные формулы для МНК-оценок}
+    МНК-оценки параметров $\beta_0$ и $\beta_1$ \cite{lit1}:
+    \begin{equation}
+        \hat{\beta}_1 = \frac{\overline{xy} - \overline{x} \cdot \overline{y}}{\overline{x^2} - (\overline{x})^2}
+     \label{beta1}
+    \end{equation}
+    \begin{equation}
+        \hat{\beta}_0 = \overline{y} - \overline{x}\hat{\beta}_1
+      \label{beta0}
+    \end{equation}
+
+\subsection{Робастные оценки коэффициентов линейной регрессии}
+Робастность оценок коэффициентов линейной регрессии (т.е. их устойчивость по отношению к наличию в данных редких, но больших по величине выбросов) может быть обеспечена различными способами. Одним из них является использование {\it метода наименьших модулей} вместо метода наименьших квадратов  \cite{lit1} :
+\vskip 0.3cm
+\par Метод наименьших модулей:
+\begin{equation}\label{mnm}
+    \sum_{i = 1}^{n}|y_i - \beta_0 - \beta_1x_i| \rightarrow \min_{\beta_0, \beta_1}.
+\end{equation}
+\begin{equation}
+    \hat{\beta}_{1R} = r_Q\frac{q^{*}_{y}}{q^{*}_{x}},
+    \label{mnm1}
+\end{equation}
+\begin{equation}
+    \hat{\beta}_{0R} = med \; y - \hat{\beta}_{1R} med \; x,
+    \label{mnm0}
+\end{equation}
+\begin{equation}
+    r_Q = \frac{1}{n}\sum_{i=1}^{n}sgn(x_i - med \; x)sgn(y_i - med \; y),
+\end{equation}
+\begin{equation}
+    q^{*}_{y} = \frac{y_j - y_l}{k_q(n)}, \qquad q^{*}_{x} = \frac{x_j - x_l}{k_q(n)}
+\end{equation}
+\[
+    l = 
+		\left\{
+		\begin{aligned}
+			 \left[n/4\right] + 1& \;\; \text{при} \;\; n/4 \;\; \text{дробном,}\\
+			 n/4                  & \;\; \text{при} \;\; n/4 \;\; \text{целом.}\\
+		\end{aligned}
+		\right.
+\]
+\[
+    j = n - l + 1.
+\]
+\[
+    sgn \; z = 
+		\left\{
+		\begin{aligned}
+			 1 & \; \text{при} \; z > 0,\\
+             0 & \; \text{при} \; z = 0,\\
+             -1 & \; \text{при} \; z < 0.\\
+		\end{aligned}
+		\right.
+\]
+Уравнение регрессии здесь имеет вид:
+\begin{equation}
+    y = \hat{\beta}_{0R} + \hat{\beta}_{1R}x.
+\end{equation}
+
+\newpage
+	\section{Особенности реализации}
+	
+В данной лабораторной работе для генерации выборок двумерного распределения была использована библиотека scipy, для минимизации функционала был использован модуль optimize из библиотеки scipy. Для построения графиков была использована библиотека Matplotlib. 
+
+В ходе данной лабораторной работы были реализованы функции вычисления оценок коэффициентов линейной регрессии. 
+Оценки методом наименьших квадратов были вычислены в соответствии с формулами \eqref{beta1} и \eqref{beta0}. 
+\vskip 0.3cm
+\hrule width 16cm height 1pt
+\begin{verbatim}
+size = 20
+x = np.linspace(-1.8, 2, size)
+y1 = ref(x) + norm.rvs(size=size)
+y2 = y1.copy()
+y2[0] += 10
+y2[-1] -= 10
+xm = np.mean(x)
+d = np.mean(x*x) - xm**2
+for y, name in zip([y1, y2]):
+    ym = np.mean(y)
+    b = (np.mean(x*y) - ym*xm) / d
+    MNK = (ym - xm*b, b)
+\end{verbatim}
+\vskip 0.3cm
+\hrule width 16cm height 1pt
+\vskip 0.3cm
+Для реализации метода наименьших модулей функционал \eqref{mnm} был минимизирован с помощью функции stats.optimize.minimize.
+\begin{verbatim}
+MNM = minimize(abs_func, [0, 1], 
+                   args=(x, y),
+                   method='COBYLA').x
+    plt.plot(x, ref(x), label='Модель')
+\end{verbatim}
+\vskip 0.3cm
+\hrule width 16cm height 1pt
+\vskip 0.3cm
+Программа для данной лабораторной работы была написана на языке Python 3.9. 
+
+	
+
+	\newpage
+	
+	\section{Результаты работы программы}
+
+\subsection{Выборка без возмущений}
+
+	В результате оценки параметров линейной регрессии для выборки без возмущений были получены следующие значения коэффициентов:
+
+	\begin{itemize}
+		\item МНК: $\hat{\beta}_0 \approx 2.05 \quad \hat{\beta}_1 \approx 2.06$
+		\item МНМ: $\hat{\beta}_{0R} \approx 1.65, \quad \hat{\beta}_{1R} \approx 1.54$
+	\end{itemize}
+
+	На Рис. \ref{reg1} представлен график модели, точки выборки, а также графики линейной регрессии с коэффициентами вычисленными по МНК и МНМ.
+
+	\begin{figure}[h]
+		\center{\includegraphics[width=0.9\linewidth]{bez.png}}
+		\caption{Выборка без возмущений}
+		\label{reg1}
+	\end{figure}
+
+	\newpage
+
+	\subsection{Выборка с возмущениями}
+
+	В результате оценки параметров линейной регрессии для выборки с возмущениями в крайних элементах были получены следующие значения коэффициентов:
+
+	\begin{itemize}
+		\item МНК: $\hat{\beta}_0 \approx 1.97, \quad \hat{\beta}_1 \approx 0.73$
+		\item МНМ: $\hat{\beta}_{0R} \approx 2.04, \quad \hat{\beta}_{1R} \approx 1.68$
+	\end{itemize}
+
+	На Рис. \ref{reg2} представлен график модели, точки выборки, а также графики линейной регрессии с коэффициентами вычисленными по МНК и МНМ.
+
+	\begin{figure}[h]
+		\center{\includegraphics[width=0.9\linewidth]{s.png}}
+		\caption{Выборка с возмущениями}
+		\label{reg2}
+	\end{figure}
+
+\newpage
+ \section*{Заключение}
+{\addcontentsline {toc}{section}{Заключение}}
+\par В ходе данной лабораторной работы была сгенерирована выборка для линейной зависимости с нормально распределенной ошибкой, были вычислены коэффициенты линейной регрессии по методам наименьших квадратов и наименьших модулей.
+\par  Как видно из оценки коэффициентов регрессии, а также по графикам, метод наименьших квадратов более точен на выборке без возмущений, но уступает по точности методу наименьших модулей на выборке с редкими, но значительными выбросами.
+
+Можно сделать вывод, что для выборок с небольшими выбросами для нахождения коэффициентов линейной регрессии предпочтительнее использовать МНК, а для выборок с большими выбросами следует использовать МНМ как менее точный, но более устойчивый.
+
+\newpage
+
+\addcontentsline{toc}{section}{Список используемой литературы}
+\begin{thebibliography}{}
+	\bibitem{lit1}  Вероятностные разделы математики. Учебник для бакалавров технических направлений.// Под ред. Максимова Ю.Д. — Спб.: «Иван Федоров», 2001. — 592 c., илл.
+	\bibitem{lit2}  Вентцель Е.С. Теория вероятностей: Учеб. для вузов. — 6-е изд. стер. — М.: Высш. шк., 1999.— 576 c.
+\end{thebibliography}
+\newpage
+\appendix
+
+
+\section{Приложение}
+\label{sec:A}
+\par Исходный код программы размещен на сервисе GitHub.
+\par Ссылка на репозиторий: \url{https://github.com/foria1405/TVlabs}
+\end{document}
