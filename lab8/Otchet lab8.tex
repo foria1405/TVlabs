@@ -1,0 +1,289 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage [left=30 mm, top=30 mm, right=30 mm, bottom=20mm, nohead, footskip=10 mm] {geometry}
+\usepackage{pscyr}
+\usepackage[T2A]{fontenc}
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\graphicspath{{src/}}
+\usepackage{listings}   
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+%\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{indentfirst}
+\usepackage{listings}
+\usepackage{float}%"Плавающие" картинки
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Sharelatex Example},
+    bookmarks=true,
+    pdfpagemode=FullScreen,
+}
+\usepackage{wrapfig}%Обтекание фигур (таблиц, картинок и прочего)
+
+\parindent=24pt
+
+
+\begin{document}
+
+\begin{center}
+\hfill \break
+\large{МИНОБРНАУКИ РОССИИ} \\
+\hfill \break
+\small {ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ БЮДЖЕТНОЕ ОБРАЗОВАТЕЛЬНОЕ УЧРЕЖДЕНИЕ }\\
+\small { ВЫСШЕГО ПРОФЕССИОНАЛЬНОГО ОБРАЗОВАНИЯ  } \\
+\hfill \break
+\normalsize {\textbf{ <<САНКТ-ПЕТЕРБУРГСКИЙ ПОЛИТЕХНИЧЕСКИЙ УНИВЕРСИТЕТ } }\\
+{\normalsize {\textbf { ПЕТРА ВЕЛИКОГО>>}}} \\
+\hfill \break
+\large{Институт Прикладной математики и механики }\\
+\hfill \break
+\large{ Кафедра: <<Телематика ( при ЦНИИ РТК )>> }\\
+\hfill \break
+Направление 02.03.01 Математика и компьютерные науки\\
+\vskip 1cm
+\Large {Отчёт по дисциплине:}
+\vskip 0.2cm
+\Large{<<Теория вероятностей и математическая статистика >>} \\
+\hfill \break
+\large{Лабораторная работа № 8} \\
+\hfill \break
+\large{<<Доверительные интервалы для параметров нормального распределения>>} \\
+\hfill \break
+\vskip 0.3cm
+\vskip 0.5cm
+\end{center}
+
+
+\begin {tabular}{cccc}
+\hspace{0.5cm}Обучающийся: &\underline {\hspace{3cm}} &  &Фомина Дарья Дмитриевна \\\\
+\hspace{0.5cm}Руководитель: &\underline {\hspace{3cm}} & &Баженов Александр Николаевич\\\\
+\end{tabular}
+\vskip 1.5 cm
+\hspace{9cm}\def \hrf#1{\hbox to#1{\hrulefill}}<<\hrf{2em}>>  \hrf{6em}  20\hrf{1em}~r.
+\vskip 1.5cm
+\begin {center} Санкт-Петербург 2021 \end{center}
+
+\thispagestyle{empty}
+
+\newpage
+
+
+\tableofcontents
+
+
+\newpage
+\section{Постановка задачи}
+
+\begin{itemize}
+\item Необходимо сгенерировать выборки размером 20 и 100 элементов для нормального распределения N(0,1). 
+\item Для полученных выборок с помощью метода максимального правдоподобия найти  оценки параметров $\mu$  и $\sigma$. 
+\item На их основе найти интервальные оценки асимптотически и на основе статистик Стьюдента и $\chi^2$.
+\end{itemize}
+В качестве параметра надежности необходимо взять $\gamma = 0.95$
+
+\newpage	
+
+	\section{Математическое описание}
+	
+	\subsection{Доверительные интервалы для параметров нормального распределения}
+
+\subsubsection{Доверительный интервал для матожидания $m$ нормального распределения}
+
+Для выборки $(x_1, ..., x_n)$ из нормальной генеральной совокупности найдём среднее $\overline{x}$ и среднее квадратичное отклонение $s$.
+\vskip 0.3cm
+Тогда величина 
+
+\begin{equation}
+	T = \sqrt{n - 1} \cdot \frac{\overline{x} - m}{s},
+\end{equation}
+
+называемая {\it статистикой Стьюдента}, распределена по закону Стьюдента с $n-1$ степенями свободы.
+\vskip 0.3cm
+Произведя несложные преобразования, получим, что:
+
+\begin{equation}
+P \left( -x < T < x \right) = 2F_T(x) - 1,
+\end{equation}
+
+где $F_T$ -- функция распределения Стьюдента с $n-1$ степенями свободы.
+\vskip 0.3cm
+Полагая $2F_T(x) - 1 = 1 - \alpha$, где $\alpha$ -- уровень значимости, имеем:
+
+\begin{multline}\label{mStud}
+\displaystyle P \left( \overline{x} - \frac{sx}{\sqrt{n-1}} < m < \overline{x} + \frac{sx}{\sqrt{n-1}} \right) = \\
+= P \left( \overline{x} - \frac{st_{1 - \frac{\alpha}{2}}(n - 1)}{\sqrt{n-1}} < m < \overline{x} + \frac{st_{1 - \frac{\alpha}{2}}(n - 1)}{\sqrt{n-1}} \right) = 1 - \alpha
+\end{multline}
+\vskip 0.3cm
+И таким образом получаем доверительный интервал для матожидания с вероятностью $1 - \alpha$. \cite{lit1}
+
+\subsection{Доверительный интервал для среднего квадратического отклонения $\sigma$ нормального распределения}
+
+Доказано, что случайная величина $\frac{ns^2}{\sigma^2}$ распределена по закону $\chi^2$ с $n-1$ степенями свободы. 
+
+После ряда преобразований, получаем:
+
+\begin{equation}
+	\displaystyle P \left( \frac{s \sqrt{n}} {\sqrt{\chi_{1 - \alpha/2}^2(n-1)}} < \sigma <  \frac{s \sqrt{n}} {\sqrt{\chi_{\alpha/2}^2(n-1)}} \right)
+	\label{s_norm}
+\end{equation}
+\vskip 0.3cm
+что и даёт доверительный интервал для $\sigma$ с доверительной вероятностью $\gamma = 1 - \alpha$. \cite{lit1}
+
+\subsection{Доверительные оценки для параметров произвольного распределения. Асимптотический подход}
+
+\subsubsection{Доверительные оценки для матожидания при большом размере выборки}
+
+Если исследуемое распределение имеет конечное матожидание и дисперсию, то имеет место центральная предельная теорема:
+
+\begin{equation}
+\frac{\overline{x}-\mathbf{M}x}{\sqrt{\mathbf{Dx}}}=\sqrt{n} \cdot \frac{\overline{x} - m}{\sigma} \overset{F}{\longrightarrow} N(x, 0, 1)
+\end{equation}
+
+Отсюда получаем, что
+
+\begin{equation*}
+P \left(-x < \sqrt{n} \cdot \frac{\overline{x} - m}{\sigma} < x \right) \approx 2 \Phi(x),
+\end{equation*}
+
+где $\Phi(x)$ -- функция Лапласа.
+\vskip 0.3cm
+Полагая $u_{1 - \alpha / 2}$ за соответствующий квантиль центрированного нормального распределения с единичной дисперсией, получаем:
+
+\begin{equation}\label{m_pr}
+P \left(\overline{x} - \frac{su_{1 - \alpha / 2}}{\sqrt{n}} < m < \overline{x} + \frac{su_{1 - \alpha / 2}}{\sqrt{n}} \right) \approx \gamma,
+\end{equation}
+
+что и даёт доверительный интервал для матожидания $m$ с доверительной вероятностью $\gamma$. \cite{lit1}
+
+
+\subsubsection{Доверительный интервал для среднего квадратического отклонения $\sigma$ произвольной генеральной совокупности при большом объёме выборки}
+Предполагаем, что исследуемая генеральная совокупность имеет конечные первые четыре момента.\\
+\vskip 0.1cm
+$u_{1-\alpha/2}$ -- квантиль нормального распределения $N(x, 0, 1)$ порядка $1-\alpha/2$.\\
+\vskip 0.1cm
+$E = \frac{\mu_4}{\sigma^4} - 3$ -- эксцесс генерального распределения, $e = \frac{m_4}{s^4} - 3$ -- выборочный эксцесс; 
+\par $m_4 = \frac{1}{n}\sum_{i=1}^{n}(x_i - \overline{x})^4$ -- четвёртый выборочный центральный момент.
+
+\begin{equation}s(1 + U)^{-1/2} < \sigma < s(1 - U)^{-1/2}, 
+\label{s_pr}
+\end{equation}
+или 
+
+\begin{equation}s(1 - 0.5U) < \sigma < s(1 + 0.5U),
+\label{sAsympt}
+\end{equation}
+где $U = u_{1-\alpha/2}\sqrt{(e+2)/n}$ 
+\vskip 0.3cm
+Приведенные формулы дают доверительный интервал для $\sigma$ с доверительной вероятностью $\gamma = 1-\alpha$. \cite{lit1}
+
+
+
+
+\newpage
+	\section{Особенности реализации}
+	
+		Для генерации выборок, вычисления квантилей нормального распределения, распределения Стьюдента и распределения хи-квадрат в  данной лабораторной работе была использована библиотека scipy.  
+		
+		Так же были реализованы функции, выполняющие вычисления интервальных оценок в соответствии с формулами (\ref{s_norm})-(\ref{sAsympt}).
+\vskip 0.3cm
+\hrule width 16cm height 1pt
+\begin{verbatim}
+   print('Классические интервальные оценки')
+    dx = s*ct*(n - 1)**(-0.5)
+    print(f'm in ({xm-dx}; {xm+dx})')
+    print(f's in ({s*(n/chi_low)**(0.5)}; {s*(n/chi_high)**(0.5)})')
+\end{verbatim}
+\vskip 0.3cm
+\hrule width 16cm height 1pt
+\vskip 0.3cm
+\begin{verbatim}
+print('Асимптотические интервальные оценки')
+    cu = norm.ppf((1 + gamma) / 2)
+    dx = s * cu *(n**(-0.5))
+    m4 = np.mean((sel - xm)**4)
+    e = m4/(s**4) - 3
+    U = cu*np.sqrt((e+2)/n)
+    print(f'm in ({xm-dx}; {xm+dx})')
+    print(f's in ({s*(1+U)**(-0.5)}; {s*(1-U)**(-0.5)})')
+\end{verbatim}
+\hrule width 16cm height 1pt
+\newpage
+
+\section{Результаты работы программы}
+В таблице \ref{table:chi} представлены интервальные оценки на основе статистик Стьюдента и хи-квадрат.
+
+\begin{table}[H]
+	\begin{center}
+		\begin{tabular}{|l|l|l|}
+		\hline
+		$n$ & Интервал $\mu$  (\ref{mStud})  & Интервал $\sigma$ (\ref{s_norm})\\ \hline
+		20  & $(-0.34; 0.63)$ & $(0.79, 1.50)$  \\ \hline
+		100 & $(-0.17; 0.21)$ & $(0.83; 1.12)$  \\ \hline
+	\end{tabular}
+	\end{center}
+\caption{Интервальные оценки на основе статистик Стьюдента и хи-квадрат}
+
+\label{table:chi}
+\end{table}
+	
+	 В таблице \ref{table:asumpt} представлены асимптотические интервальные оценки.
+	
+	
+	\begin{table}[H]
+		\begin{center}
+			\begin{tabular}{|l|l|l|}
+			\hline
+			$n$ & Интервал $\mu$ (\ref{m_pr})   & Интервал $\sigma$ (\ref{sAsympt})\\ \hline
+			20  & $(-0.29; 0.59)$ & $(0.82; 1.41)$  \\ \hline
+			100 & $(-0.04; 0.35)$ & $(0.85; 1.09)$  \\ \hline
+		\end{tabular}
+		\end{center}
+	
+	\caption{Асимптотические интервальные оценки}
+	\label{table:asumpt}
+	\end{table}
+
+
+\newpage
+ \section*{Заключение}
+{\addcontentsline {toc}{section}{Заключение}}
+\par  В ходе данной лабораторной работы для были сгенерированы выборки размером 20 и 100 элементов для нормального распределения. С помощью метода максимального правдоподобия для полученных выборок  были найдены оценки параметров $\mu$ И  $\sigma$. На основе полученных оценок были найдены интервальные оценки на основе статистик Стьдента и хи-квадрат, так же интервальные оценки были найдены асимптотически.
+	
+	При изучении полученных оценок можно сделать вывод о том, что асимптотический метод оценки доверительного интервала демонстрирует более точные результаты в отличии от оценок на основе статистик Стьдента и хи-квадрат. 
+	
+	Также заметно, что при увеличении размера выборки, доверительные интервалы становятся меньшими по длине, то есть более точными.
+
+На основании полученных результатов можно сделать вывод о том, что длина доверительных интервалов уменьшается с увеличением выборки, то есть возрастает точность. Доверительные интервалы для параметров нормального распределения более надёжны, так как основаны на точном, а не асимптотическом распределении.
+
+\newpage
+
+
+
+
+
+\addcontentsline{toc}{section}{Список используемой литературы}
+\begin{thebibliography}{}
+	\bibitem{lit1}  Вероятностные разделы математики. Учебник для бакалавров технических направлений.// Под ред. Максимова Ю.Д. — Спб.: «Иван Федоров», 2001. — 592 c., илл.
+	\bibitem{lit2}  Вентцель Е.С. Теория вероятностей: Учеб. для вузов. — 6-е изд. стер. — М.: Высш. шк., 1999.— 576 c.
+\end{thebibliography}
+\newpage
+\appendix
+
+
+\section{Приложение}
+\label{sec:A}
+\par Исходный код программы размещен на сервисе GitHub.
+\par Ссылка на репозиторий: \url{https://github.com/foria1405/TVlabs}
+\end{document}
+
+\newpage
+\section{Математическое описание}
